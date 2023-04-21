@@ -121,14 +121,15 @@ export default defineComponent({
 
     function wheelEndedCallback() {
       let redeemCode = giftID();
-      console.log(JSON.parse(JSON.stringify(wheel)));
-      console.log(JSON.parse(JSON.stringify(wheel)).value.itemSelected.name);
+      let selected = wheel.value.itemSelected.name;
+      //   console.log(JSON.parse(JSON.stringify(wheel.value.itemSelected.name)));
+      //   console.log(JSON.parse(JSON.stringify(wheel.value)).itemSelected.name);
 
       var templateParams = {
         name: "Wheeler",
         message:
           "You have just won " +
-          JSON.parse(JSON.stringify(wheel.value)).itemSelected.name +
+          JSON.parse(JSON.stringify(selected)) +
           ". This is from the wheelers fortune spin you did earlier. Contact us at gift@wheelers.com to confirm and get your gift and use the ID (" +
           redeemCode +
           ") to redeem your gift.",
