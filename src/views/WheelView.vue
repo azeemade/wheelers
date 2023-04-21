@@ -20,7 +20,7 @@
       baseBackground="rgb(255 69 69)"
       baseHtmlContent="You have just <br>won a"
       @click="launchWheel"
-      @wheel-end="wheelEndedCallback(e)"
+      @wheel-end="wheelEndedCallback"
     />
 
     <!-- Put this part before </body> tag -->
@@ -121,6 +121,7 @@ export default defineComponent({
 
     function wheelEndedCallback() {
       let redeemCode = giftID();
+      console.log(JSON.parse(JSON.stringify(wheel.value)).itemSelected.name);
 
       var templateParams = {
         name: "Wheeler",
