@@ -121,6 +121,7 @@ export default defineComponent({
 
     function wheelEndedCallback() {
       let redeemCode = giftID();
+      console.log(wheel.value);
       console.log(JSON.parse(JSON.stringify(wheel.value)).itemSelected.name);
 
       var templateParams = {
