@@ -122,11 +122,10 @@ export default defineComponent({
     function wheelEndedCallback() {
       let redeemCode = giftID();
       let selected = wheel.value.itemSelected.name;
-      //   console.log(JSON.parse(JSON.stringify(wheel.value.itemSelected.name)));
-      //   console.log(JSON.parse(JSON.stringify(wheel.value)).itemSelected.name);
 
       var templateParams = {
         name: "Wheeler",
+        email: JSON.parse(localStorage.getItem("email")),
         message:
           "You have just won " +
           JSON.parse(JSON.stringify(selected)) +
@@ -145,6 +144,7 @@ export default defineComponent({
         .then(
           (result) => {
             show.value = true;
+            console.log(result);
           },
           (error) => {
             console.log(error);
