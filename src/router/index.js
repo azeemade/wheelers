@@ -14,14 +14,35 @@ const router = createRouter({
     {
       path: '/wheel',
       name: 'wheel',
-      component: WheelView
+      component: WheelView,
+      meta: {
+        requiresEmail: true,
+      }
     },
     {
       path: '/success',
       name: 'success',
-      component: SuccessView
+      component: SuccessView,
+      meta: {
+        requiresEmail: true
+      }
     },
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresEmail)) {
+    if (localStorage.getItem('email') == null) {
+      next({
+        path: '/',
+        params: { nextUrl: to.fullPath }
+      })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
+});
 
 export default router

@@ -20,13 +20,21 @@
       baseBackground="rgb(255 69 69)"
       baseHtmlContent="You have just <br>won a"
       @click="launchWheel"
+      @wheel-start="wheelStartedCallback"
       @wheel-end="wheelEndedCallback"
     />
 
+    <div v-if="showLoader">
+      <Loader />
+    </div>
+
     <!-- Put this part before </body> tag -->
-    <div class="modal" :class="show ? ' modal-open' : ''" id="my-modal-2">
+    <div class="modal" :class="showModal ? ' modal-open' : ''" id="my-modal-2">
       <div class="modal-box">
         <h3 class="font-bold text-lg">Congratulations !</h3>
+        <p class="py-2">
+          You have just won : <strong>{{ selected }}</strong>
+        </p>
         <p class="py-4">
           An email has been sent to you containing your winnings and how to get
           them.
@@ -45,12 +53,12 @@ import { ref } from "vue";
 import { Roulette } from "vue3-roulette";
 import { useRouter } from "vue-router";
 import emailjs from "emailjs-com";
-import EmailForm from "../components/EmailForm.vue";
+import Loader from "../components/Loader.vue";
 
 export default defineComponent({
   components: {
     Roulette,
-    EmailForm,
+    Loader,
   },
   setup() {
     const router = useRouter();
@@ -107,11 +115,9 @@ export default defineComponent({
       },
     ];
 
-    let show = ref(false);
-
-    function launchWheel() {
-      wheel.value.launchWheel();
-    }
+    let showModal = ref(false);
+    let showLoader = ref(false);
+    let selected = ref("");
 
     const giftID = function (length = 6) {
       return Math.random()
@@ -119,16 +125,24 @@ export default defineComponent({
         .substring(2, length + 2);
     };
 
+    function launchWheel() {
+      wheel.value.launchWheel();
+    }
+
+    function wheelStartedCallback() {
+      showLoader.value = true;
+    }
+
     function wheelEndedCallback() {
       let redeemCode = giftID();
-      let selected = wheel.value.itemSelected.name;
+      selected.value = wheel.value.itemSelected.name;
 
       var templateParams = {
         name: "Wheeler",
         email: JSON.parse(localStorage.getItem("email")),
         message:
           "You have just won " +
-          JSON.parse(JSON.stringify(selected)) +
+          JSON.parse(JSON.stringify(selected.value)) +
           ". This is from the wheelers fortune spin you did earlier. Contact us at gift@wheelers.com to confirm and get your gift and use the ID (" +
           redeemCode +
           ") to redeem your gift.",
@@ -143,7 +157,8 @@ export default defineComponent({
         )
         .then(
           (result) => {
-            show.value = true;
+            showLoader.value = false;
+            showModal.value = true;
             console.log(result);
           },
           (error) => {
@@ -153,18 +168,21 @@ export default defineComponent({
     }
 
     function handleModalClose() {
-      show.value = false;
+      showModal.value = false;
       router.push("/success");
     }
 
     return {
       items,
       wheel,
+      showLoader,
+      showModal,
+      selected,
       launchWheel,
       wheelEndedCallback,
-      show,
       handleModalClose,
       giftID,
+      wheelStartedCallback,
     };
   },
 });
